@@ -49,7 +49,7 @@ function BookAppointment() {
         for (const field of fieldsToValidate) {
             const isFieldValid = form.validateField(field) // validateField updates form.errors
 
-            if (!isFieldValid) {
+            if (isFieldValid.hasError) {
                 currentStepIsValid = false
             }
         }
@@ -101,7 +101,7 @@ function BookAppointment() {
                             <Select
                                 label='Gender'
                                 placeholder='Gender'
-                                data={["Male", "Female", "Other"]} // Added "Other" for inclusivity
+                                data={["Male", "Female"]}
                                 withAsterisk
                                 {...form.getInputProps("gender")}
                                 mb='sm'
