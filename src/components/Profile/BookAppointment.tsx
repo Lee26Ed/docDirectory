@@ -12,8 +12,13 @@ import { useDisclosure } from "@mantine/hooks"
 import { useState } from "react"
 import { useForm } from "@mantine/form"
 import { DatePickerInput, getTimeRange, TimeGrid } from "@mantine/dates"
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
 
 function BookAppointment() {
+    const { data: session, status } = useSession()
+    const router = useRouter()
+
     const [opened, { open, close }] = useDisclosure(false)
     const [active, setActive] = useState(0)
 
@@ -68,6 +73,14 @@ function BookAppointment() {
         close() // Close the modal
         setActive(0) // Reset to the first step
         form.reset() // Reset form fields and errors
+    }
+
+    const handleRedirect = () => {
+        if (status === "authenticated") {
+            open()
+        } else {
+            router.push("/auth/login")
+        }
     }
 
     return (
@@ -171,7 +184,7 @@ function BookAppointment() {
                 </form>
             </Modal>
 
-            <Button onClick={open}>Book an appointment</Button>
+            <Button onClick={handleRedirect}>Book an appointment</Button>
         </>
     )
 }
