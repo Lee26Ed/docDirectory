@@ -1,4 +1,5 @@
 import classes from "@/components/Carousels/comments.module.css"
+import { Center, Stack, Title } from "@mantine/core"
 
 function Comments() {
     const comments = [
@@ -35,43 +36,48 @@ function Comments() {
     ]
 
     return (
-        <div
-            className={classes.slider}
-            style={
-                {
-                    // @ts-ignore
-                    "--width": "200px",
-                    "--height": "200px",
-                    "--quantity": comments.length,
-                } as React.CSSProperties
-            }
-        >
-            <div className={classes.list}>
-                {comments.map((comment, index) => (
-                    <div
-                        key={comment.id}
-                        className={classes.item}
-                        style={
-                            {
-                                // @ts-ignore
-                                "--position": index + 1,
-                            } as React.CSSProperties
-                        }
-                    >
+        <Stack>
+            <Center>
+                <Title order={2}>What our users say</Title>
+            </Center>
+            <div
+                className={classes.slider}
+                style={
+                    {
+                        // @ts-ignore
+                        "--width": "200px",
+                        "--height": "200px",
+                        "--quantity": comments.length,
+                    } as React.CSSProperties
+                }
+            >
+                <div className={classes.list}>
+                    {comments.map((comment, index) => (
                         <div
-                            className={classes.card}
-                            style={{
-                                background:
-                                    "linear-gradient(to right, #00c6ff, #0072ff)",
-                            }}
+                            key={comment.id}
+                            className={classes.item}
+                            style={
+                                {
+                                    // @ts-ignore
+                                    "--position": index + 1,
+                                } as React.CSSProperties
+                            }
                         >
-                            <p>{comment.text}</p>
-                            <p>{comment.name}</p>
+                            <div
+                                className={classes.card}
+                                style={{
+                                    background:
+                                        "linear-gradient(to right, #00c6ff, #0072ff)",
+                                }}
+                            >
+                                <p>{comment.text}</p>
+                                <p>{comment.name}</p>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
-        </div>
+        </Stack>
     )
 }
 

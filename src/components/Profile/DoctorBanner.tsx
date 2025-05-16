@@ -1,13 +1,27 @@
-"use client"
-import { Box, Button, Container, Text, TextInput, Title } from "@mantine/core"
+import {
+    Badge,
+    Box,
+    Button,
+    Container,
+    Group,
+    Rating,
+    Text,
+    TextInput,
+    Title,
+} from "@mantine/core"
 import classes from "./doctorBanner.module.css"
 import Image from "next/image"
+import BookAppointment from "./BookAppointment"
 
 interface DoctorBannerProps {
     doctorInfo: {
         name: string
         specialty: string
         profileImage: string
+        location: string
+        bio: string
+        doctorId: string
+        rating: number
     }
 }
 
@@ -16,7 +30,7 @@ const DoctorBanner = ({ doctorInfo }: DoctorBannerProps) => {
         <Container>
             <div className={classes.wrapper}>
                 <Image
-                    src={doctorInfo.profileImage}
+                    src={`/docs/${doctorInfo.profileImage}`}
                     alt='Doctor Banner'
                     width={400}
                     height={300}
@@ -24,33 +38,26 @@ const DoctorBanner = ({ doctorInfo }: DoctorBannerProps) => {
                 />
                 <div className={classes.body}>
                     <Title className={classes.title}>{doctorInfo.name}</Title>
-                    <Text fw={500} fz='lg' mb={5}>
-                        Subscribe to our newsletter!
-                    </Text>
-                    <Text fz='sm' c='dimmed'>
-                        You will never miss important product updates, latest
-                        news and community QA sessions. Our newsletter is once a
-                        week, every Sunday.
-                    </Text>
+                    <Badge color='green'>{doctorInfo.specialty}</Badge>
 
-                    <div className={classes.controls}>
-                        <TextInput
-                            placeholder='Your email'
-                            classNames={{
-                                input: classes.input,
-                                root: classes.inputWrapper,
-                            }}
-                            radius='md'
-                            size='md'
+                    <Text>
+                        <strong>Location:</strong> {doctorInfo.location}
+                    </Text>
+                    <Group>
+                        <Text>
+                            <strong>Rating: </strong>{" "}
+                        </Text>
+                        <Rating
+                            fractions={4}
+                            defaultValue={doctorInfo.rating}
+                            readOnly
                         />
-                        <Button
-                            className={classes.control}
-                            radius='md'
-                            size='md'
-                        >
-                            Subscribe
-                        </Button>
-                    </div>
+                    </Group>
+
+                    <Text className={classes.description} mb={20}>
+                        {doctorInfo.bio}
+                    </Text>
+                    <BookAppointment />
                 </div>
             </div>
         </Container>
