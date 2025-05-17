@@ -13,7 +13,7 @@ type Props = {
 
 function Hero({ onResults, onLoading, onError }: Props) {
     return (
-        <Flex justify='center' align='center' gap='xl'>
+        <Flex justify='center' align='center' gap='xl' mt={40}>
             <Image src='/hero.png' alt='hero' width={300} height={300} />
             <Stack>
                 <Title className={classes.title} ta='center' mt={100}>

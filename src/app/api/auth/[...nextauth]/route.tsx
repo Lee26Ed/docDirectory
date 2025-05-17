@@ -54,7 +54,6 @@ export const authOptions = {
                             role: data.user.role,
                             backendToken: data.token,
                         }
-                        console.log("User authenticated successfully:", user)
                         return user
                     } else {
                         console.error(
@@ -76,8 +75,7 @@ export const authOptions = {
             // The `user` object is only available on the first call after `authorize` succeeds
             if (user) {
                 token.id = user.id
-                token.backendToken = user.backendToken // Persist the backend token in the NextAuth.js JWT
-                // Persist other user data you need in the token
+                token.backendToken = user.backendToken
                 token.name = user.name
                 token.email = user.email
                 token.role = user.role

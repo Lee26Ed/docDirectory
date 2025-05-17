@@ -15,7 +15,7 @@ import {
 import classes from "./login.module.css"
 import { useRouter } from "next/navigation"
 import { useForm } from "@mantine/form"
-import { signIn } from "next-auth/react"
+import { getSession, signIn } from "next-auth/react"
 import { notifications } from "@mantine/notifications"
 import { useDisclosure, useFocusTrap } from "@mantine/hooks"
 import Link from "next/link"
@@ -56,7 +56,14 @@ const LoginForm = () => {
         close()
 
         if (result?.ok) {
-            router.back()
+            const session = await getSession()
+            const role = session?.user?.role
+
+            if (role === "doctor") {
+                router.push(`/profiles/doctor/${session?.user?.id}`)
+            } else {
+                router.back()
+            }
         } else {
             notifications.show({
                 title: "Login failed",

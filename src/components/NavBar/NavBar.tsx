@@ -45,7 +45,15 @@ export function NavBar() {
     }
 
     return (
-        <Box pb={80}>
+        <Box
+            style={{
+                position: "sticky",
+                top: 0,
+                zIndex: 1000,
+                backgroundColor: "rgba(255, 255, 255, 0.8)",
+                backdropFilter: "blur(10px)",
+            }}
+        >
             <header className={classes.header}>
                 <Group justify='space-between' h='100%'>
                     <Link href='/'>

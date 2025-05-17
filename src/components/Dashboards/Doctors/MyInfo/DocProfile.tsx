@@ -1,3 +1,4 @@
+"use client"
 import { useState } from "react"
 import {
     Container,
@@ -12,136 +13,322 @@ import {
     Title,
     Divider,
     Box,
-    rem,
+    Group,
+    NumberInput,
 } from "@mantine/core"
+import useFetch from "@/hooks/useFetch"
+import { useSession } from "next-auth/react"
+import { formRootRule, useForm } from "@mantine/form"
 
-export default function UserProfile() {
-    const [photo, setPhoto] = useState(null)
+export default function DocProfile() {
+    const { data: session } = useSession()
+    if (!session) {
+        return <div>Loading...</div>
+    }
+    const user = session.user
+
+    const [photo, setPhoto] = useState<File | null>(null)
+
+    const passwordForm = useForm({
+        initialValues: {
+            oldPassword: "",
+            newPassword: "",
+        },
+        validate: {
+            newPassword: (value) =>
+                value.length >= 6
+                    ? null
+                    : "Password must include at least 6 characters",
+        },
+    })
+
+    const doctor = {
+        firstName: "Enrique",
+        lastName: "Cabrera",
+        email: "ec@mail.com",
+        phone: "+34 123 456 789",
+        licenseNumber: "123456789",
+        specialty: "Cardiology",
+        experienceYears: 10,
+        location: "Madrid, Spain",
+        biography: "Experienced cardiologist with a passion for patient care.",
+        image: "f001.png",
+    }
+
+    const profileForm = useForm({
+        initialValues: {
+            firstName: doctor.firstName,
+            lastName: doctor.lastName,
+            email: doctor.email,
+            phone: doctor.phone,
+            medicalLicenseNumber: doctor.licenseNumber,
+            specialization: doctor.specialty,
+            yearsOfExperience: doctor.experienceYears,
+            location: doctor.location,
+            biography: doctor.biography,
+        },
+        validate: {
+            firstName: (value) =>
+                value.length < 2
+                    ? "Full name must have at least 2 letters"
+                    : null,
+            lastName: (value) =>
+                value.length < 2
+                    ? "Full name must have at least 2 letters"
+                    : null,
+            email: (value) =>
+                /^\S+@\S+\.\S+$/.test(value) ? null : "Invalid email",
+            medicalLicenseNumber: (value) =>
+                value.length > 0 ? null : "Medical license number is required",
+            specialization: (value) =>
+                value.length > 0 ? null : "Specialization is required",
+            yearsOfExperience: (value) =>
+                value > 0 ? null : "Years of experience must be greater than 0",
+            location: (value) =>
+                value.length > 0 ? null : "Location is required",
+            phone: (value) =>
+                /^\+?[1-9]\d{1,14}$/.test(value)
+                    ? null
+                    : "Invalid phone number",
+        },
+    })
+
+    const photoForm = useForm({
+        initialValues: {
+            photo: null as File | null,
+        },
+    })
+
+    const handlePasswordSubmit = async (values: typeof passwordForm.values) => {
+        // TODO: make a post request to update the password
+        console.log(values)
+    }
+
+    const handleProfileSubmit = async (values: typeof profileForm.values) => {
+        // TODO: make a post request to update the profile
+        console.log(values)
+    }
+
+    const handlePhotoSubmit = (values: { photo: File | null }) => {
+        if (!values.photo) return
+        // perform your upload logic here (e.g., using FormData + axios)
+        console.log("Uploading photo:", values.photo)
+        photoForm.setFieldValue("photo", null)
+    }
 
     return (
         <Container size='xl' py='xl'>
-            <Title order={2} mb='lg'>
-                Users
-            </Title>
+            <Group justify='space-between' mb='xl'>
+                <Title order={2} mb='lg'>
+                    {user.name}
+                </Title>
+                {/* <Button type="submit">Update</Button> */}
+            </Group>
 
             <Grid gutter='xl'>
-                {/* Account Management Section */}
                 <Grid.Col span={{ base: 12, md: 4 }}>
-                    <Box mb='md'>
-                        <Avatar
-                            src={photo ? URL.createObjectURL(photo) : undefined}
-                            size={160}
-                            radius='md'
-                            mx='auto'
-                        />
-                        <FileButton
-                            onChange={() => console.log("change")}
-                            accept='image/*'
-                        >
-                            {(props) => (
-                                <Button fullWidth mt='md' {...props}>
-                                    Upload Photo
-                                </Button>
+                    <form onSubmit={photoForm.onSubmit(handlePhotoSubmit)}>
+                        <Box mb='xl' mt={"xl"}>
+                            <Avatar
+                                src={
+                                    photoForm.values.photo
+                                        ? URL.createObjectURL(
+                                              photoForm.values.photo
+                                          )
+                                        : `/docs/${doctor.image}` // get image from doctor data
+                                }
+                                size={160}
+                                radius='md'
+                                mx='auto'
+                            />
+                            {!photoForm.values.photo && (
+                                <FileButton
+                                    accept='image/*'
+                                    {...photoForm.getInputProps("photo")}
+                                    onChange={(file) =>
+                                        photoForm.setFieldValue("photo", file)
+                                    }
+                                >
+                                    {(props) => (
+                                        <Button fullWidth mt='md' {...props}>
+                                            Upload Photo
+                                        </Button>
+                                    )}
+                                </FileButton>
                             )}
-                        </FileButton>
-                    </Box>
+                            {photoForm.values.photo && (
+                                <>
+                                    <Button fullWidth mt='md' type='submit'>
+                                        Save Photo
+                                    </Button>
+                                    <Button
+                                        fullWidth
+                                        mt='md'
+                                        variant='outline'
+                                        onClick={() =>
+                                            photoForm.setFieldValue(
+                                                "photo",
+                                                null
+                                            )
+                                        }
+                                    >
+                                        Cancel
+                                    </Button>
+                                </>
+                            )}
+                        </Box>
+                    </form>
 
-                    <PasswordInput
-                        label='Old Password'
-                        placeholder='••••••••'
-                        mb='sm'
-                    />
-                    <PasswordInput
-                        label='New Password'
-                        placeholder='••••••••'
-                        mb='sm'
-                    />
-                    <Button fullWidth mt='sm'>
-                        Change Password
-                    </Button>
+                    <form
+                        onSubmit={passwordForm.onSubmit(handlePasswordSubmit)}
+                    >
+                        <PasswordInput
+                            label='Old Password'
+                            placeholder='••••••••'
+                            mb='sm'
+                            key={passwordForm.key("oldPassword")}
+                            {...passwordForm.getInputProps("oldPassword")}
+                        />
+                        <PasswordInput
+                            label='New Password'
+                            placeholder='••••••••'
+                            mb='sm'
+                            key={passwordForm.key("newPassword")}
+                            {...passwordForm.getInputProps("newPassword")}
+                        />
+                        <Button fullWidth mt='sm' type='submit'>
+                            Change Password
+                        </Button>
+                    </form>
                 </Grid.Col>
 
                 {/* Profile Information Section */}
                 <Grid.Col span={{ base: 12, md: 8 }}>
-                    <Title order={4} mb='sm'>
-                        Profile Information
-                    </Title>
-                    <Grid gutter='md'>
-                        <Grid.Col span={6}>
-                            <TextInput
-                                label='Username'
-                                defaultValue='gene.rodrig'
-                            />
-                        </Grid.Col>
-                        <Grid.Col span={6}>
-                            <TextInput label='First Name' defaultValue='Gene' />
-                        </Grid.Col>
-                        <Grid.Col span={6}>
-                            <TextInput label='Nickname' defaultValue='Gene.r' />
-                        </Grid.Col>
-                        <Grid.Col span={6}>
-                            <Select
-                                label='Role'
-                                data={["Subscriber", "Admin", "Editor"]}
-                                defaultValue='Subscriber'
-                            />
-                        </Grid.Col>
-                        <Grid.Col span={6}>
-                            <TextInput
-                                label='Last Name'
-                                defaultValue='Rodriguez'
-                            />
-                        </Grid.Col>
-                        <Grid.Col span={6}>
-                            <TextInput
-                                label='Display Name Publicly as'
-                                defaultValue='Gene'
-                            />
-                        </Grid.Col>
-                    </Grid>
+                    <form onSubmit={profileForm.onSubmit(handleProfileSubmit)}>
+                        <Title order={4} mb='sm'>
+                            Profile Information
+                        </Title>
+                        <Grid gutter='md'>
+                            <Grid.Col span={6}>
+                                <TextInput
+                                    label='First Name'
+                                    key={profileForm.key("firstName")}
+                                    {...profileForm.getInputProps("firstName")}
+                                />
+                            </Grid.Col>
+                            <Grid.Col span={6}>
+                                <TextInput
+                                    label='Last Name'
+                                    key={profileForm.key("lastName")}
+                                    {...profileForm.getInputProps("lastName")}
+                                />
+                            </Grid.Col>
+                            <Grid.Col span={6}>
+                                <TextInput
+                                    label='Specialization'
+                                    key={profileForm.key("specialization")}
+                                    {...profileForm.getInputProps(
+                                        "specialization"
+                                    )}
+                                />
+                            </Grid.Col>
+                            <Grid.Col span={6}>
+                                <NumberInput
+                                    label='Years of Experience'
+                                    key={profileForm.key("yearsOfExperience")}
+                                    {...profileForm.getInputProps(
+                                        "yearsOfExperience"
+                                    )}
+                                />
+                            </Grid.Col>
+                            <Grid.Col span={6}>
+                                <TextInput
+                                    label='License Number'
+                                    key={profileForm.key(
+                                        "medicalLicenseNumber"
+                                    )}
+                                    {...profileForm.getInputProps(
+                                        "medicalLicenseNumber"
+                                    )}
+                                />
+                            </Grid.Col>
+                            {/* <Grid.Col span={6}>
+                                <TextInput
+                                    label='Display Name Publicly as'
+                                    defaultValue='Gene'
+                                />
+                            </Grid.Col> */}
+                        </Grid>
 
-                    <Divider my='lg' />
+                        <Divider my='lg' />
 
-                    <Title order={4} mb='sm'>
-                        Contact Info
-                    </Title>
-                    <Grid gutter='md'>
-                        <Grid.Col span={6}>
-                            <TextInput
-                                label='Email (required)'
-                                defaultValue='gene.rodrig@gmail.com'
-                            />
-                        </Grid.Col>
-                        <Grid.Col span={6}>
-                            <TextInput
-                                label='WhatsApp'
-                                defaultValue='@gene-rod'
-                            />
-                        </Grid.Col>
-                        <Grid.Col span={6}>
-                            <TextInput
-                                label='Website'
-                                defaultValue='gene-rodrig.webflow.io'
-                            />
-                        </Grid.Col>
-                        <Grid.Col span={6}>
-                            <TextInput
-                                label='Telegram'
-                                defaultValue='@gene-rod'
-                            />
-                        </Grid.Col>
-                    </Grid>
+                        <Title order={4} mb='sm'>
+                            Contact Info
+                        </Title>
+                        <Grid gutter='md'>
+                            <Grid.Col span={6}>
+                                <TextInput
+                                    label='Email (required)'
+                                    key={profileForm.key("email")}
+                                    {...profileForm.getInputProps("email")}
+                                />
+                            </Grid.Col>
+                            <Grid.Col span={6}>
+                                <TextInput
+                                    label='Phone'
+                                    key={profileForm.key("phone")}
+                                    {...profileForm.getInputProps("phone")}
+                                />
+                            </Grid.Col>
+                            <Grid.Col span={6}>
+                                <TextInput
+                                    label='Location'
+                                    key={profileForm.key("location")}
+                                    {...profileForm.getInputProps("location")}
+                                />
+                            </Grid.Col>
+                            {/* <Grid.Col span={6}>
+                                <TextInput
+                                    label='Telegram'
+                                    defaultValue='@gene-rod'
+                                />
+                            </Grid.Col> */}
+                        </Grid>
 
-                    <Divider my='lg' />
+                        <Divider my='lg' />
 
-                    <Title order={4} mb='sm'>
-                        About the User
-                    </Title>
-                    <Textarea
-                        label='Biographical Info'
-                        minRows={4}
-                        defaultValue='Albert Einstein was a German mathematician and physicist who developed the special and general theories of relativity. In 1921, he won the Nobel Prize for physics for his explanation of the photoelectric effect. In the following decade.'
-                    />
+                        <Title order={4} mb='sm'>
+                            About Me
+                        </Title>
+                        <Textarea
+                            label='Biographical Info'
+                            minRows={4}
+                            key={profileForm.key("biography")}
+                            {...profileForm.getInputProps("biography")}
+                        />
+                        {profileForm.isTouched() && (
+                            <>
+                                <Button
+                                    fullWidth
+                                    mt='sm'
+                                    type='submit'
+                                    color='teal'
+                                    variant='outline'
+                                >
+                                    Update Profile
+                                </Button>
+                                <Button
+                                    fullWidth
+                                    mt='sm'
+                                    color='gray'
+                                    variant='outline'
+                                    onClick={profileForm.reset}
+                                >
+                                    Cancel
+                                </Button>
+                            </>
+                        )}
+                    </form>
                 </Grid.Col>
             </Grid>
         </Container>

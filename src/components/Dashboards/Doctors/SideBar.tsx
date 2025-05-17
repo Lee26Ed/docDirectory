@@ -12,6 +12,7 @@ import {
 } from "@tabler/icons-react"
 import { Avatar, Code, Group } from "@mantine/core"
 import classes from "./sidebar.module.css"
+import { signOut } from "next-auth/react"
 
 const data = [
     {
@@ -74,7 +75,10 @@ export function SideBar({ active, setActive }: SideBarProps) {
                 <a
                     href='#'
                     className={classes.link}
-                    onClick={(event) => event.preventDefault()}
+                    onClick={(event) => {
+                        event.preventDefault()
+                        signOut({ callbackUrl: "/" })
+                    }}
                 >
                     <IconLogout className={classes.linkIcon} stroke={1.5} />
                     <span>Logout</span>

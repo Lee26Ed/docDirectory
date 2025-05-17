@@ -30,7 +30,7 @@ const page = async ({ params }: { params: Params }) => {
     const reviews = await reviewsRes.json()
 
     return (
-        <Stack>
+        <Stack mt={40}>
             <DoctorBanner doctorInfo={doctorInfo} />
 
             <DoctorReviews reviews={reviews} />
