@@ -1,7 +1,8 @@
 import React from "react"
+import DocProfile from "./DocProfile"
 
 const ProfileSettings = () => {
-    return <div>ProfileSettings</div>
+    return <DocProfile />
 }
 
 export default ProfileSettings

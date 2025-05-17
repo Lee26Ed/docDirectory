@@ -9,6 +9,7 @@ import {
     IconArrowsLeftRight,
     IconUser,
     IconLogout,
+    IconDashboard,
 } from "@tabler/icons-react"
 import { signOut } from "next-auth/react"
 import { useRouter } from "next/navigation"
@@ -20,6 +21,18 @@ type UserProps = {
 
 const UserMenu = ({ user }: UserProps) => {
     const router = useRouter()
+
+    const handleDashboardClick = () => {
+        if (user.role === "admin") {
+            router.push("/admin/dashboard")
+        }
+        if (user.role === "patient") {
+            router.push(`/profiles/user/${user.id}`)
+        }
+        if (user.role === "doctor") {
+            router.push(`/profiles/doctor/${user.id}`)
+        }
+    }
     return (
         <Menu shadow='md' width={200}>
             <Menu.Target>
@@ -29,10 +42,10 @@ const UserMenu = ({ user }: UserProps) => {
             <Menu.Dropdown>
                 <Menu.Label>Application</Menu.Label>
                 <Menu.Item
-                    leftSection={<IconUser size={14} />}
-                    onClick={() => router.push("/profile")}
+                    leftSection={<IconDashboard size={14} />}
+                    onClick={handleDashboardClick}
                 >
-                    Profile
+                    Dashboard
                 </Menu.Item>
                 <Menu.Item leftSection={<IconMessageCircle size={14} />}>
                     Messages

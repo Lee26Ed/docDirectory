@@ -10,6 +10,7 @@ declare module "next-auth" {
             id: number
             role: "doctor" | "patient" | "admin" // or string if dynamic
         }
+        backendToken: string
     }
 
     interface User {
