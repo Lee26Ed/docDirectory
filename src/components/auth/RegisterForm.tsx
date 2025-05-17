@@ -28,6 +28,7 @@ import Image from "next/image"
 import { createUser } from "@/app/api/actions/RegisterUser"
 import { signIn } from "next-auth/react"
 import { notifications } from "@mantine/notifications"
+import { createDoctor } from "@/app/api/actions/RegisterDoctor"
 
 // Define interfaces for form values
 interface UserRegisterFormValues {
@@ -44,6 +45,10 @@ interface DoctorRegisterFormValues {
     confirmPassword: string
     medicalLicenseNumber: string
     specialization: string
+    yearsOfExperience: number
+    location: string
+    phone: string
+    biography?: string
 }
 
 export default function RegisterForm() {
@@ -85,6 +90,10 @@ export default function RegisterForm() {
             confirmPassword: "",
             medicalLicenseNumber: "",
             specialization: "",
+            yearsOfExperience: 0,
+            location: "",
+            phone: "",
+            biography: "",
         },
         validate: {
             fullName: (value) =>
@@ -103,20 +112,28 @@ export default function RegisterForm() {
                 value.length > 0 ? null : "Medical license number is required",
             specialization: (value) =>
                 value.length > 0 ? null : "Specialization is required",
+            yearsOfExperience: (value) =>
+                value > 0 ? null : "Years of experience must be greater than 0",
+            location: (value) =>
+                value.length > 0 ? null : "Location is required",
+            phone: (value) =>
+                /^\+?[1-9]\d{1,14}$/.test(value)
+                    ? null
+                    : "Invalid phone number",
         },
     })
 
     // Handle User Registration Submission
     const handleUserSubmit = async (values: UserRegisterFormValues) => {
         open()
-        console.log("User Registration Submitted:", values)
         try {
-            await createUser(values)
+            const user = await createUser(values)
+
             // User created successfully
             await signIn("credentials", {
                 email: values.email,
                 password: values.password,
-                callbackUrl: "/",
+                callbackUrl: `/profiles/user/${user.userId}`,
             })
         } catch (error) {
             console.error("Error creating user:", error)
@@ -134,11 +151,29 @@ export default function RegisterForm() {
     }
 
     // Handle Doctor Registration Submission
-    const handleDoctorSubmit = (values: DoctorRegisterFormValues) => {
+    const handleDoctorSubmit = async (values: DoctorRegisterFormValues) => {
         open()
-        console.log("Doctor Registration Submitted:", values)
-        // TODO: Implement actual doctor registration API call
-        close()
+        try {
+            const user = await createDoctor(values)
+
+            // Doctor created successfully
+            await signIn("credentials", {
+                email: values.email,
+                password: values.password,
+                callbackUrl: `/profiles/doctor/${user.userId}`,
+            })
+        } catch (error) {
+            console.error("Error creating doctor:", error)
+            const message =
+                error instanceof Error ? error.message : "Something went wrong"
+            notifications.show({
+                title: "Registration failed",
+                message,
+                color: "red",
+            })
+        } finally {
+            close()
+        }
     }
 
     return (
@@ -191,7 +226,7 @@ export default function RegisterForm() {
                         </Tabs.Tab>
                     </Tabs.List>
 
-                    <Tabs.Panel value='user' pt='xs' ref={focusTrapRef}>
+                    <Tabs.Panel value='user' pt='xs'>
                         <form onSubmit={userForm.onSubmit(handleUserSubmit)}>
                             <Stack>
                                 <TextInput

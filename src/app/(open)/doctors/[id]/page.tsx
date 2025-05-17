@@ -8,8 +8,9 @@ type Params = Promise<{ id: string }>
 
 const page = async ({ params }: { params: Params }) => {
     const { id } = await params
+    const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL // Define this in your .env file
 
-    const res = await fetch(`http://localhost:5000/api/v1/doctors/${id}`, {
+    const res = await fetch(`${BACKEND_API_URL}/api/v1/doctors/${id}`, {
         next: { revalidate: 60 },
     })
     if (!res.ok) {
@@ -18,7 +19,7 @@ const page = async ({ params }: { params: Params }) => {
     const doctorInfo = await res.json()
 
     const reviewsRes = await fetch(
-        `http://localhost:5000/api/v1/reviews/doctor/${id}`,
+        `${BACKEND_API_URL}/api/v1/reviews/doctor/${id}`,
         {
             next: { revalidate: 60 },
         }

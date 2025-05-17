@@ -8,6 +8,7 @@ import {
     Drawer,
     Group,
     ScrollArea,
+    Text,
     useMantineTheme,
 } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
@@ -16,6 +17,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useSession } from "next-auth/react"
 import { signOut } from "next-auth/react"
+import UserMenu from "./UserMenu"
 
 export function NavBar() {
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
@@ -70,7 +72,9 @@ export function NavBar() {
 
                     <Group visibleFrom='sm'>
                         {session?.user ? (
-                            <Button onClick={() => signOut()}>Log Out</Button>
+                            <>
+                                <UserMenu user={session.user!} />
+                            </>
                         ) : (
                             <>
                                 <Link href='/auth/login'>
@@ -118,7 +122,12 @@ export function NavBar() {
 
                     <Group justify='center' grow pb='xl' px='md'>
                         {session?.user ? (
-                            <Button onClick={() => signOut()}>Log Out</Button>
+                            <>
+                                <UserMenu user={session.user!} />
+                                <Button onClick={() => signOut()}>
+                                    Log Out
+                                </Button>
+                            </>
                         ) : (
                             <>
                                 <Link href='/auth/login'>

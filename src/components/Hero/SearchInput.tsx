@@ -14,6 +14,8 @@ const SearchInput = ({ onResults, onLoading, onError }: Props) => {
     const [value, setValue] = useState("")
     const [debounced] = useDebouncedValue(value, 200)
 
+    const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL // Define this in your .env file
+
     useEffect(() => {
         const fetchDoctors = async () => {
             if (debounced.trim() === "") {
@@ -26,7 +28,7 @@ const SearchInput = ({ onResults, onLoading, onError }: Props) => {
 
             try {
                 const response = await fetch(
-                    `http://localhost:5000/api/v1/doctors?search=${encodeURIComponent(
+                    `${BACKEND_API_URL}/api/v1/doctors?search=${encodeURIComponent(
                         debounced
                     )}`
                 )

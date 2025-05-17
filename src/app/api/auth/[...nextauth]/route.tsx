@@ -5,7 +5,7 @@ import NextAuth, { AuthOptions, SessionStrategy } from "next-auth"
 
 import CredentialsProvider from "next-auth/providers/credentials"
 
-const BACKEND_API_URL = process.env.BACKEND_API_URL // Define this in your .env file
+const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL // Define this in your .env file
 
 export const authOptions = {
     providers: [
