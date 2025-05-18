@@ -1,5 +1,8 @@
 "use client"
-import { updateDoctorProfile } from "@/app/api/actions/UpdateDoctorProfile"
+import {
+    updateDoctorPassword,
+    updateDoctorProfile,
+} from "@/app/api/actions/UpdateDoctorProfile"
 import {
     Container,
     Grid,
@@ -102,12 +105,29 @@ export default function DocProfile({
     })
 
     const handlePasswordSubmit = async (values: typeof passwordForm.values) => {
-        // TODO: make a post request to update the password
-        console.log(values)
+        const preparedData = {
+            doctorId: Number(doctor.doctorId),
+            ...values,
+        }
+        try {
+            await updateDoctorPassword(preparedData, session.backendToken)
+            notifications.show({
+                title: "Success",
+                message: "Password updated successfully",
+                color: "teal",
+            })
+            passwordForm.reset()
+        } catch (error) {
+            console.error("Error updating password:", error)
+            notifications.show({
+                title: "Error",
+                message: "Failed to update password",
+                color: "red",
+            })
+        }
     }
 
     const handleProfileSubmit = async (values: typeof profileForm.values) => {
-        // TODO: make a post request to update the profile
         const { firstName, lastName, ...rest } = values
         const updatedProfile = {
             ...rest,
@@ -115,7 +135,14 @@ export default function DocProfile({
             doctorId: doctor.doctorId,
         }
         try {
-            updateDoctorProfile(updatedProfile, session.backendToken)
+            await updateDoctorProfile(updatedProfile, session.backendToken)
+            notifications.show({
+                title: "Success",
+                message: "Profile updated successfully",
+                color: "teal",
+            })
+            refetch()
+            profileForm.resetTouched()
         } catch (error) {
             console.error("Error updating profile:", error)
             notifications.show({
@@ -127,6 +154,7 @@ export default function DocProfile({
     }
 
     const handlePhotoSubmit = (values: { photo: File | null }) => {
+        // TODO: write function to upload the photo
         if (!values.photo) return
         // perform your upload logic here (e.g., using FormData + axios)
         console.log("Uploading photo:", values.photo)
@@ -269,12 +297,6 @@ export default function DocProfile({
                                     )}
                                 />
                             </Grid.Col>
-                            {/* <Grid.Col span={6}>
-                                <TextInput
-                                    label='Display Name Publicly as'
-                                    defaultValue='Gene'
-                                />
-                            </Grid.Col> */}
                         </Grid>
 
                         <Divider my='lg' />
@@ -304,12 +326,6 @@ export default function DocProfile({
                                     {...profileForm.getInputProps("location")}
                                 />
                             </Grid.Col>
-                            {/* <Grid.Col span={6}>
-                                <TextInput
-                                    label='Telegram'
-                                    defaultValue='@gene-rod'
-                                />
-                            </Grid.Col> */}
                         </Grid>
 
                         <Divider my='lg' />

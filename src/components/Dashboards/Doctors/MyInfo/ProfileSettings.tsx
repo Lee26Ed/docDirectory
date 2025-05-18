@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import DocProfile from "./DocProfile"
 import { useSession } from "next-auth/react"
 import useFetch from "@/hooks/useFetch"
@@ -30,6 +30,7 @@ const ProfileSettings = () => {
         data: doctor,
         loading,
         error,
+        refetch,
     } = useFetch<Doctor>({
         url: `${BACKEND_API_URL}/api/v1/doctors/${user.doctorId}`,
         config: {
@@ -39,11 +40,14 @@ const ProfileSettings = () => {
             },
         },
     })
+
     if (loading) return <div>Loading...</div>
     if (error) return <div>Error loading doctor profile.</div>
     if (!doctor) return <div>No profile found.</div>
 
-    return <DocProfile doctor={doctor} />
+    console.log("fetched doctor: ", doctor)
+
+    return <DocProfile doctor={doctor} refetch={refetch} />
 }
 
 export default ProfileSettings
