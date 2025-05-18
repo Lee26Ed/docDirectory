@@ -8,6 +8,7 @@ declare module "next-auth" {
             email?: string
             image?: string
             id: number
+            doctorId?: number
             role: "doctor" | "patient" | "admin" // or string if dynamic
         }
         backendToken: string

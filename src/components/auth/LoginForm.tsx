@@ -44,7 +44,6 @@ const LoginForm = () => {
 
     const handleSubmit = async (values: typeof form.values) => {
         open()
-        console.log(values)
 
         const result = await signIn("credentials", {
             email: values.email,
@@ -52,7 +51,6 @@ const LoginForm = () => {
             redirect: false,
         })
 
-        console.log(result)
         close()
 
         if (result?.ok) {

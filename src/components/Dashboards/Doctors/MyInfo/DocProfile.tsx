@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { updateDoctorProfile } from "@/app/api/actions/UpdateDoctorProfile"
 import {
     Container,
     Grid,
@@ -16,19 +16,34 @@ import {
     Group,
     NumberInput,
 } from "@mantine/core"
-import useFetch from "@/hooks/useFetch"
+import { useForm } from "@mantine/form"
+import { notifications } from "@mantine/notifications"
 import { useSession } from "next-auth/react"
-import { formRootRule, useForm } from "@mantine/form"
 
-export default function DocProfile() {
+interface Doctor {
+    doctorId: string
+    name: string
+    specialty: string
+    experience: number
+    licenseNumber: string
+    email: string
+    phone: string
+    location: string
+    bio: string
+    profileImage: string
+}
+
+export default function DocProfile({
+    doctor,
+    refetch,
+}: {
+    doctor: Doctor
+    refetch: () => void
+}) {
     const { data: session } = useSession()
     if (!session) {
         return <div>Loading...</div>
     }
-    const user = session.user
-
-    const [photo, setPhoto] = useState<File | null>(null)
-
     const passwordForm = useForm({
         initialValues: {
             oldPassword: "",
@@ -42,30 +57,17 @@ export default function DocProfile() {
         },
     })
 
-    const doctor = {
-        firstName: "Enrique",
-        lastName: "Cabrera",
-        email: "ec@mail.com",
-        phone: "+34 123 456 789",
-        licenseNumber: "123456789",
-        specialty: "Cardiology",
-        experienceYears: 10,
-        location: "Madrid, Spain",
-        biography: "Experienced cardiologist with a passion for patient care.",
-        image: "f001.png",
-    }
-
     const profileForm = useForm({
         initialValues: {
-            firstName: doctor.firstName,
-            lastName: doctor.lastName,
+            firstName: doctor.name.split(" ")[0],
+            lastName: doctor.name.split(" ")[1],
             email: doctor.email,
             phone: doctor.phone,
             medicalLicenseNumber: doctor.licenseNumber,
             specialization: doctor.specialty,
-            yearsOfExperience: doctor.experienceYears,
+            yearsOfExperience: doctor.experience,
             location: doctor.location,
-            biography: doctor.biography,
+            biography: doctor.bio,
         },
         validate: {
             firstName: (value) =>
@@ -106,7 +108,22 @@ export default function DocProfile() {
 
     const handleProfileSubmit = async (values: typeof profileForm.values) => {
         // TODO: make a post request to update the profile
-        console.log(values)
+        const { firstName, lastName, ...rest } = values
+        const updatedProfile = {
+            ...rest,
+            fullName: `${firstName} ${lastName}`,
+            doctorId: doctor.doctorId,
+        }
+        try {
+            updateDoctorProfile(updatedProfile, session.backendToken)
+        } catch (error) {
+            console.error("Error updating profile:", error)
+            notifications.show({
+                title: "Error",
+                message: "Failed to update profile",
+                color: "red",
+            })
+        }
     }
 
     const handlePhotoSubmit = (values: { photo: File | null }) => {
@@ -120,7 +137,7 @@ export default function DocProfile() {
         <Container size='xl' py='xl'>
             <Group justify='space-between' mb='xl'>
                 <Title order={2} mb='lg'>
-                    {user.name}
+                    {doctor.name}
                 </Title>
                 {/* <Button type="submit">Update</Button> */}
             </Group>
@@ -135,7 +152,7 @@ export default function DocProfile() {
                                         ? URL.createObjectURL(
                                               photoForm.values.photo
                                           )
-                                        : `/docs/${doctor.image}` // get image from doctor data
+                                        : `/docs/${doctor.profileImage}` // get image from doctor data
                                 }
                                 size={160}
                                 radius='md'

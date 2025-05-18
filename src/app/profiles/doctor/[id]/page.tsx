@@ -7,19 +7,39 @@ import Schedule from "@/components/Dashboards/Doctors/Scheds/Schedule"
 import { SideBar } from "@/components/Dashboards/Doctors/SideBar"
 import { Flex, Group } from "@mantine/core"
 import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { useState } from "react"
 
 const page = () => {
+    const params = useParams()
+    const { id } = params
     const router = useRouter()
-    const { data: session } = useSession()
+    const { data: session, status } = useSession()
     const [active, setActive] = useState("Dashboard")
 
-    // console.log(session)
-    // if (!session) {
-    //     router.push("/auth/login")
-    //     return null
-    // }
+    if (status === "loading") {
+        return <div>Loading...</div>
+    }
+    if (status === "unauthenticated") {
+        router.push("/auth/login")
+        return null
+    }
+    if (status === "authenticated" && session.user.role !== "doctor") {
+        router.push("/forbidden")
+        return null
+    }
+
+    if (status === "authenticated" && session.user.role === "doctor") {
+        // Check if the user has a doctorId
+        if (!session.user.doctorId) {
+            router.push("/forbidden")
+            return null
+        }
+        if (session.user.id !== Number(id)) {
+            router.push("/forbidden")
+            return null
+        }
+    }
 
     return (
         <Flex h={"100vh"}>

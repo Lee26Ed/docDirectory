@@ -52,6 +52,7 @@ export const authOptions = {
                             name: data.user.fullName,
                             email: data.user.email,
                             role: data.user.role,
+                            doctorId: data.user.doctorId,
                             backendToken: data.token,
                         }
                         return user
@@ -79,6 +80,7 @@ export const authOptions = {
                 token.name = user.name
                 token.email = user.email
                 token.role = user.role
+                token.doctorId = user.doctorId
             }
             // Return the token.
             return token
@@ -92,6 +94,8 @@ export const authOptions = {
             session.user.name = token.name
             session.user.email = token.email
             session.user.role = token.role
+            session.user.doctorId = token.doctorId
+
             return session
         },
     },
