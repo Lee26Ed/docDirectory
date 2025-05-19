@@ -41,13 +41,34 @@ const ProfileSettings = () => {
         },
     })
 
+    // get the doctor's schedule data from the backend
+    const {
+        data: schedule,
+        loading: scheduleLoading,
+        error: scheduleError,
+        refetch: scheduleRefetch,
+    } = useFetch<Schedule>({
+        url: `${BACKEND_API_URL}/api/v1/schedule`,
+        config: {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${session.backendToken}`,
+            },
+        },
+    })
+
     if (loading) return <div>Loading...</div>
     if (error) return <div>Error loading doctor profile.</div>
     if (!doctor) return <div>No profile found.</div>
 
-    console.log("fetched doctor: ", doctor)
-
-    return <DocProfile doctor={doctor} refetch={refetch} />
+    return (
+        <DocProfile
+            doctor={doctor}
+            refetch={refetch}
+            schedule={schedule}
+            scheduleRefetch={scheduleRefetch}
+        />
+    )
 }
 
 export default ProfileSettings

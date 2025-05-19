@@ -16,12 +16,11 @@ import { signOut } from "next-auth/react"
 
 const data = [
     {
-        link: "/profiles/doctor/1/dashboard",
+        link: "",
         label: "Dashboard",
         icon: IconDashboard,
     },
     { link: "", label: "Appointments", icon: IconStethoscope },
-    { link: "", label: "Schedule", icon: IconCalendarClock },
     { link: "", label: "Appointment History", icon: IconHistory },
     { link: "", label: "My Information", icon: IconUserCog },
 ]

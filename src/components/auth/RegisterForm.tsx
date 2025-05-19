@@ -371,9 +371,7 @@ export default function RegisterForm() {
                                     label='Biography'
                                     placeholder='Tell us about yourself'
                                     radius='md' // Apply radius
-                                    {...doctorForm.getInputProps(
-                                        "additionalInfo"
-                                    )}
+                                    {...doctorForm.getInputProps("biography")}
                                 />
                                 <Group>
                                     <Button

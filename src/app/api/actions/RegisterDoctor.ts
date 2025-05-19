@@ -14,6 +14,15 @@ interface RegisterDoctorFormData {
     profileImage?: string
 }
 
+const defaultSchedule = {
+    workingDays: [1, 2, 3, 4, 5], // Monday to Friday
+    from: "09:00",
+    to: "17:00",
+    duration: 30,
+    downtime: 0,
+    price: 50,
+}
+
 export async function createDoctor(formData: RegisterDoctorFormData) {
     const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL
 
@@ -29,7 +38,6 @@ export async function createDoctor(formData: RegisterDoctorFormData) {
         bio: formData.biography,
         profileImage: formData.profileImage || "f001.png",
     }
-    console.log(data)
     try {
         const res = await fetch(
             `${BACKEND_API_URL}/api/v1/auth/register/doctor`,
@@ -49,11 +57,7 @@ export async function createDoctor(formData: RegisterDoctorFormData) {
         if (!result) {
             throw new Error("Failed to create user")
         }
-
-        const user = result.user
-        if (!user) {
-            throw new Error("Failed to create user")
-        }
+        const user = result[0]
         return user
     } catch (error) {
         console.error("Error creating doctor:", error)

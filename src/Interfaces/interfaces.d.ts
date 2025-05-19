@@ -18,3 +18,16 @@ interface Doctor extends User {
     specialty: string | null
     rating?: number | null
 }
+
+interface Schedule {
+    scheduleId: number
+    doctorId: number
+    workingDays: number[]
+    from: string
+    to: string
+    duration: number
+    downtime: number
+    price: number
+    createdAt: Date
+    updatedAt: Date
+}

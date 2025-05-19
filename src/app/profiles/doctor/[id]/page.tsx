@@ -45,9 +45,8 @@ const page = () => {
         <Flex h={"100vh"}>
             <SideBar active={active} setActive={setActive} />
             <main style={{ flexGrow: 1, padding: "20px" }}>
-                {active === "Dashboard" && <Dashboard />}
+                {active === "Dashboard" && <Dashboard setActive={setActive} />}
                 {active === "Appointments" && <Appointments />}
-                {active === "Schedule" && <Schedule />}
                 {active === "Appointment History" && <History />}
                 {active === "My Information" && <ProfileSettings />}
             </main>

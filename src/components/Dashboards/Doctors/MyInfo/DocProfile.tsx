@@ -18,10 +18,12 @@ import {
     Box,
     Group,
     NumberInput,
+    Tabs,
 } from "@mantine/core"
 import { useForm } from "@mantine/form"
 import { notifications } from "@mantine/notifications"
 import { useSession } from "next-auth/react"
+import ScheduleSetup from "../Scheds/ScheduleForm"
 
 interface Doctor {
     doctorId: string
@@ -39,9 +41,13 @@ interface Doctor {
 export default function DocProfile({
     doctor,
     refetch,
+    schedule,
+    scheduleRefetch,
 }: {
     doctor: Doctor
     refetch: () => void
+    schedule: Schedule | null
+    scheduleRefetch: () => void
 }) {
     const { data: session } = useSession()
     if (!session) {
@@ -163,11 +169,10 @@ export default function DocProfile({
 
     return (
         <Container size='xl' py='xl'>
-            <Group justify='space-between' mb='xl'>
-                <Title order={2} mb='lg'>
+            <Group justify='space-between'>
+                <Title order={2} mb='sm'>
                     {doctor.name}
                 </Title>
-                {/* <Button type="submit">Update</Button> */}
             </Group>
 
             <Grid gutter='xl'>
@@ -249,119 +254,148 @@ export default function DocProfile({
 
                 {/* Profile Information Section */}
                 <Grid.Col span={{ base: 12, md: 8 }}>
-                    <form onSubmit={profileForm.onSubmit(handleProfileSubmit)}>
-                        <Title order={4} mb='sm'>
-                            Profile Information
-                        </Title>
-                        <Grid gutter='md'>
-                            <Grid.Col span={6}>
-                                <TextInput
-                                    label='First Name'
-                                    key={profileForm.key("firstName")}
-                                    {...profileForm.getInputProps("firstName")}
-                                />
-                            </Grid.Col>
-                            <Grid.Col span={6}>
-                                <TextInput
-                                    label='Last Name'
-                                    key={profileForm.key("lastName")}
-                                    {...profileForm.getInputProps("lastName")}
-                                />
-                            </Grid.Col>
-                            <Grid.Col span={6}>
-                                <TextInput
-                                    label='Specialization'
-                                    key={profileForm.key("specialization")}
-                                    {...profileForm.getInputProps(
-                                        "specialization"
-                                    )}
-                                />
-                            </Grid.Col>
-                            <Grid.Col span={6}>
-                                <NumberInput
-                                    label='Years of Experience'
-                                    key={profileForm.key("yearsOfExperience")}
-                                    {...profileForm.getInputProps(
-                                        "yearsOfExperience"
-                                    )}
-                                />
-                            </Grid.Col>
-                            <Grid.Col span={6}>
-                                <TextInput
-                                    label='License Number'
-                                    key={profileForm.key(
-                                        "medicalLicenseNumber"
-                                    )}
-                                    {...profileForm.getInputProps(
-                                        "medicalLicenseNumber"
-                                    )}
-                                />
-                            </Grid.Col>
-                        </Grid>
+                    <Tabs variant='outline' defaultValue='profile'>
+                        <Tabs.List mb={"md"}>
+                            <Tabs.Tab value='profile'>Profile</Tabs.Tab>
+                            <Tabs.Tab value='Schedule'>Schedule</Tabs.Tab>
+                        </Tabs.List>
+                        <Tabs.Panel value='profile' pt='xs'>
+                            <form
+                                onSubmit={profileForm.onSubmit(
+                                    handleProfileSubmit
+                                )}
+                            >
+                                <Grid gutter='md'>
+                                    <Grid.Col span={6}>
+                                        <TextInput
+                                            label='First Name'
+                                            key={profileForm.key("firstName")}
+                                            {...profileForm.getInputProps(
+                                                "firstName"
+                                            )}
+                                        />
+                                    </Grid.Col>
+                                    <Grid.Col span={6}>
+                                        <TextInput
+                                            label='Last Name'
+                                            key={profileForm.key("lastName")}
+                                            {...profileForm.getInputProps(
+                                                "lastName"
+                                            )}
+                                        />
+                                    </Grid.Col>
+                                    <Grid.Col span={6}>
+                                        <TextInput
+                                            label='Specialization'
+                                            key={profileForm.key(
+                                                "specialization"
+                                            )}
+                                            {...profileForm.getInputProps(
+                                                "specialization"
+                                            )}
+                                        />
+                                    </Grid.Col>
+                                    <Grid.Col span={6}>
+                                        <NumberInput
+                                            label='Years of Experience'
+                                            key={profileForm.key(
+                                                "yearsOfExperience"
+                                            )}
+                                            {...profileForm.getInputProps(
+                                                "yearsOfExperience"
+                                            )}
+                                        />
+                                    </Grid.Col>
+                                    <Grid.Col span={6}>
+                                        <TextInput
+                                            label='License Number'
+                                            key={profileForm.key(
+                                                "medicalLicenseNumber"
+                                            )}
+                                            {...profileForm.getInputProps(
+                                                "medicalLicenseNumber"
+                                            )}
+                                        />
+                                    </Grid.Col>
+                                </Grid>
 
-                        <Divider my='lg' />
+                                <Divider my='lg' />
 
-                        <Title order={4} mb='sm'>
-                            Contact Info
-                        </Title>
-                        <Grid gutter='md'>
-                            <Grid.Col span={6}>
-                                <TextInput
-                                    label='Email (required)'
-                                    key={profileForm.key("email")}
-                                    {...profileForm.getInputProps("email")}
-                                />
-                            </Grid.Col>
-                            <Grid.Col span={6}>
-                                <TextInput
-                                    label='Phone'
-                                    key={profileForm.key("phone")}
-                                    {...profileForm.getInputProps("phone")}
-                                />
-                            </Grid.Col>
-                            <Grid.Col span={6}>
-                                <TextInput
-                                    label='Location'
-                                    key={profileForm.key("location")}
-                                    {...profileForm.getInputProps("location")}
-                                />
-                            </Grid.Col>
-                        </Grid>
+                                <Title order={4} mb='sm'>
+                                    Contact Info
+                                </Title>
+                                <Grid gutter='md'>
+                                    <Grid.Col span={6}>
+                                        <TextInput
+                                            label='Email (required)'
+                                            key={profileForm.key("email")}
+                                            {...profileForm.getInputProps(
+                                                "email"
+                                            )}
+                                        />
+                                    </Grid.Col>
+                                    <Grid.Col span={6}>
+                                        <TextInput
+                                            label='Phone'
+                                            key={profileForm.key("phone")}
+                                            {...profileForm.getInputProps(
+                                                "phone"
+                                            )}
+                                        />
+                                    </Grid.Col>
+                                    <Grid.Col span={6}>
+                                        <TextInput
+                                            label='Location'
+                                            key={profileForm.key("location")}
+                                            {...profileForm.getInputProps(
+                                                "location"
+                                            )}
+                                        />
+                                    </Grid.Col>
+                                </Grid>
 
-                        <Divider my='lg' />
+                                <Divider my='lg' />
 
-                        <Title order={4} mb='sm'>
-                            About Me
-                        </Title>
-                        <Textarea
-                            label='Biographical Info'
-                            minRows={4}
-                            key={profileForm.key("biography")}
-                            {...profileForm.getInputProps("biography")}
-                        />
-                        {profileForm.isTouched() && (
-                            <>
-                                <Button
-                                    fullWidth
-                                    mt='sm'
-                                    type='submit'
-                                    color='teal'
-                                    variant='outline'
-                                >
-                                    Update Profile
-                                </Button>
-                                <Button
-                                    fullWidth
-                                    mt='sm'
-                                    color='gray'
-                                    variant='outline'
-                                    onClick={profileForm.reset}
-                                >
-                                    Cancel
-                                </Button>
-                            </>
-                        )}
-                    </form>
+                                <Title order={4} mb='sm'>
+                                    About Me
+                                </Title>
+                                <Textarea
+                                    label='Biographical Info'
+                                    minRows={4}
+                                    key={profileForm.key("biography")}
+                                    {...profileForm.getInputProps("biography")}
+                                />
+                                {profileForm.isTouched() && (
+                                    <>
+                                        <Button
+                                            fullWidth
+                                            mt='sm'
+                                            type='submit'
+                                            color='teal'
+                                            variant='outline'
+                                        >
+                                            Update Profile
+                                        </Button>
+                                        <Button
+                                            fullWidth
+                                            mt='sm'
+                                            color='gray'
+                                            variant='outline'
+                                            onClick={profileForm.reset}
+                                        >
+                                            Cancel
+                                        </Button>
+                                    </>
+                                )}
+                            </form>
+                        </Tabs.Panel>
+                        <Tabs.Panel value='Schedule' pt='xs'>
+                            <ScheduleSetup
+                                schedule={schedule}
+                                refetch={scheduleRefetch}
+                            />
+                        </Tabs.Panel>
+                    </Tabs>
                 </Grid.Col>
             </Grid>
         </Container>
