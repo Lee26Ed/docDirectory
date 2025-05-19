@@ -28,6 +28,8 @@ export async function updateDoctorProfile(
         phone: formData.phone,
         bio: formData.biography,
     }
+    console.log("data", data)
+    console.log("token", token)
     try {
         const res = await fetch(`${BACKEND_API_URL}/api/v1/doctors/`, {
             method: "PUT",

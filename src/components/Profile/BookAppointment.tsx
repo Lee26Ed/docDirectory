@@ -7,20 +7,31 @@ import {
     Button,
     Stepper,
     Group,
+    Loader,
+    Stack,
+    Title,
+    Text,
+    Paper,
 } from "@mantine/core"
-import { useDisclosure } from "@mantine/hooks"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "@mantine/form"
 import { DatePickerInput, getTimeRange, TimeGrid } from "@mantine/dates"
 import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
+import {
+    CreateAppointment,
+    GetUnavailableTimes,
+} from "@/app/api/actions/CreateAppointment"
+import { notifications } from "@mantine/notifications"
 
-function BookAppointment() {
-    const { data: session, status } = useSession()
-    const router = useRouter()
+interface BookAppointmentProps {
+    opened: boolean
+    close: () => void
+    schedule: Schedule | null
+}
 
-    const [opened, { open, close }] = useDisclosure(false)
+function BookAppointment({ opened, close, schedule }: BookAppointmentProps) {
     const [active, setActive] = useState(0)
+    const { data: session } = useSession()
 
     const today = new Date()
     const maxMonth = new Date()
@@ -31,7 +42,7 @@ function BookAppointment() {
             name: "",
             gender: "",
             description: "",
-            date: null as Date | null,
+            appointmentDate: null as Date | null,
             time: null as string | null, // Explicitly string or null if TimeGrid provides strings
         },
         validate: {
@@ -39,16 +50,37 @@ function BookAppointment() {
                 value.trim().length > 0 ? null : "Name is required",
             gender: (value) => (value ? null : "Gender is required"),
             description: () => null,
-            date: (value) => (value ? null : "Date is required"),
+            appointmentDate: (value) => (value ? null : "Date is required"),
             time: (value) => {
                 return value ? null : "Time is required" // Or `value && String(value).trim() !== ""` for stricter check
             },
         },
     })
 
+    const [loadingTimes, setLoadingTimes] = useState(false)
+    const [availableTimes, setAvailableTimes] = useState<string[]>([])
+
+    useEffect(() => {
+        if (form.values.appointmentDate) {
+            setLoadingTimes(true)
+            const fetchUnavailableTimes = async () => {
+                const times = await GetUnavailableTimes(
+                    form.values.appointmentDate,
+                    schedule?.doctorId,
+                    session?.backendToken || ""
+                )
+                setAvailableTimes(times)
+                setLoadingTimes(false)
+            }
+            fetchUnavailableTimes()
+        }
+    }, [form.values.appointmentDate, schedule?.doctorId, session?.backendToken])
+
     const nextStep = () => {
         const fieldsToValidate =
-            active === 0 ? ["name", "gender", "description"] : ["date", "time"]
+            active === 0
+                ? ["name", "gender", "description"]
+                : ["appointmentDate", "time"]
 
         let currentStepIsValid = true
         for (const field of fieldsToValidate) {
@@ -68,20 +100,52 @@ function BookAppointment() {
         setActive((current) => (current > 0 ? current - 1 : current))
     }
 
-    const handleSubmit = (values: typeof form.values) => {
+    const handleSubmit = async (values: typeof form.values) => {
         console.log("Final submitted values", values)
-        close() // Close the modal
-        setActive(0) // Reset to the first step
-        form.reset() // Reset form fields and errors
-    }
-
-    const handleRedirect = () => {
-        if (status === "authenticated") {
-            open()
-        } else {
-            router.push("/auth/login")
+        const formData = {
+            doctorId: schedule!.doctorId,
+            duration: schedule!.duration,
+            price: schedule!.price,
+            ...values,
+        }
+        try {
+            const res = await CreateAppointment(
+                formData,
+                session?.backendToken || ""
+            )
+            notifications.show({
+                title: "Success",
+                message: "Appointment created successfully!",
+                color: "green",
+            })
+            close()
+            setActive(0)
+            form.reset()
+        } catch (error) {
+            console.error("Error creating appointment:", error)
+            notifications.show({
+                title: "Error",
+                message: "Failed to create appointment. Please try again.",
+                color: "red",
+            })
         }
     }
+
+    const minutesToHHMM = (minutes: number): string => {
+        const hours = Math.floor(minutes / 60)
+        const mins = minutes % 60
+        return `${String(hours).padStart(2, "0")}:${String(mins).padStart(
+            2,
+            "0"
+        )}`
+    }
+
+    const Detail = ({ label, value }: { label: string; value: string }) => (
+        <Group justify='space-between'>
+            <Text fw={500}>{label}:</Text>
+            <Text>{value}</Text>
+        </Group>
+    )
 
     return (
         <>
@@ -118,6 +182,7 @@ function BookAppointment() {
                                 withAsterisk
                                 {...form.getInputProps("gender")}
                                 mb='sm'
+                                searchable
                             />
                             <Textarea
                                 label='Description'
@@ -138,30 +203,89 @@ function BookAppointment() {
                                 placeholder='Pick date'
                                 withAsterisk
                                 clearable
-                                {...form.getInputProps("date")}
+                                {...form.getInputProps("appointmentDate")}
                                 minDate={today} // Use the calculated today
                                 maxDate={maxMonth}
                                 mb='md'
-                                mt='md' // Added margin top
+                                mt='md'
+                                excludeDate={(date) => {
+                                    const d = new Date(date)
+                                    return !schedule?.workingDays.includes(
+                                        d.getDay() + 1
+                                    )
+                                }}
+                                firstDayOfWeek={0}
                             />
 
-                            <TimeGrid
-                                data={getTimeRange({
-                                    startTime: "09:30", // Adjusted startTime
-                                    endTime: "11:45",
-                                    interval: "00:15",
-                                })}
-                                allowDeselect
-                                disabled={!form.values.date}
-                                {...form.getInputProps("time")}
-                            />
+                            {form.values.appointmentDate && !loadingTimes && (
+                                <TimeGrid
+                                    data={getTimeRange({
+                                        startTime: schedule?.from || "8:00",
+                                        endTime: schedule?.to || "17:00",
+                                        interval: minutesToHHMM(
+                                            schedule?.duration || 30
+                                        ),
+                                    })}
+                                    allowDeselect
+                                    disabled={!form.values.appointmentDate}
+                                    disableTime={availableTimes}
+                                    {...form.getInputProps("time")}
+                                />
+                            )}
+                            {loadingTimes && <Loader size='sm' mt='sm' />}
                         </Stepper.Step>
 
                         <Stepper.Completed>
-                            <Group justify='center' mt='xl' mb='md'>
-                                You're ready to book! Review your details and
-                                click "Create" to finish.
-                            </Group>
+                            <Stack justify='center' mt='xl' mb='md' gap='md'>
+                                <Title order={3}>You're ready to book!</Title>
+                                <Text c='dimmed'>
+                                    Review your details and click{" "}
+                                    <strong>"Create"</strong> to finish.
+                                </Text>
+
+                                <Paper
+                                    shadow='sm'
+                                    p='md'
+                                    radius='md'
+                                    withBorder
+                                >
+                                    <Stack gap='sm'>
+                                        <Detail
+                                            label='Name'
+                                            value={form.values.name}
+                                        />
+                                        <Detail
+                                            label='Gender'
+                                            value={form.values.gender}
+                                        />
+                                        <Detail
+                                            label='Date'
+                                            value={
+                                                form.values.appointmentDate
+                                                    ? new Date(
+                                                          form.values.appointmentDate
+                                                      ).toLocaleDateString()
+                                                    : "Not selected"
+                                            }
+                                        />
+
+                                        <Detail
+                                            label='Time'
+                                            value={
+                                                form.values.time ||
+                                                "Not selected"
+                                            }
+                                        />
+                                        <Detail
+                                            label='Description'
+                                            value={
+                                                form.values.description ||
+                                                "None"
+                                            }
+                                        />
+                                    </Stack>
+                                </Paper>
+                            </Stack>
                         </Stepper.Completed>
                     </Stepper>
 
@@ -173,18 +297,14 @@ function BookAppointment() {
                         )}
                         {active <= 2 ? (
                             <Button onClick={nextStep}>
-                                {active == 2
-                                    ? "Create Appoitnment"
-                                    : "Next Step"}
+                                {active == 2 ? "Create" : "Next Step"}
                             </Button>
                         ) : (
-                            <Button type='submit'>Create Appointment</Button>
+                            <Button type='submit'>Create</Button>
                         )}
                     </Group>
                 </form>
             </Modal>
-
-            <Button onClick={handleRedirect}>Book an appointment</Button>
         </>
     )
 }

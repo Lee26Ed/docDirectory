@@ -13,6 +13,7 @@ import "@mantine/dates/styles.css"
 import "@mantine/dropzone/styles.css"
 import { Notifications } from "@mantine/notifications"
 import SessionProviderWrapper from "@/components/auth/SessionProviderWrapper"
+import "react-big-calendar/lib/css/react-big-calendar.css"
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
