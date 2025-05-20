@@ -69,7 +69,7 @@ export function StatsSegments() {
             </Group>
 
             <Text c='dimmed' fz='sm'>
-                Page views compared to previous month
+                Profile views compared to previous month
             </Text>
 
             <Progress.Root

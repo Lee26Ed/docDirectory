@@ -1,7 +1,6 @@
 "use client"
 import Appointments from "@/components/Dashboards/Doctors/Appoints/Appointments"
 import Dashboard from "@/components/Dashboards/Doctors/Dash/Dashboard"
-import History from "@/components/Dashboards/Doctors/Hist/History"
 import ProfileSettings from "@/components/Dashboards/Doctors/MyInfo/ProfileSettings"
 import { SideBar } from "@/components/Dashboards/Doctors/SideBar"
 import { Flex, Group } from "@mantine/core"
@@ -46,7 +45,6 @@ const page = () => {
             <main style={{ flexGrow: 1, padding: "20px" }}>
                 {active === "Dashboard" && <Dashboard setActive={setActive} />}
                 {active === "Appointments" && <Appointments />}
-                {active === "Appointment History" && <History />}
                 {active === "My Information" && <ProfileSettings />}
             </main>
         </Flex>

@@ -1,10 +1,10 @@
 "use client"
 import Dashboard from "@/components/Dashboards/Doctors/Dash/Dashboard"
-import History from "@/components/Dashboards/Doctors/Hist/History"
-import ProfileSettings from "@/components/Dashboards/Doctors/MyInfo/ProfileSettings"
 import Appointment from "@/components/Dashboards/Patients/Appointments/Appointment"
+import UserDashboard from "@/components/Dashboards/Patients/Dash/UserDashboard"
+import ReviewDoc from "@/components/Dashboards/Patients/DocReviews/ReviewDoc"
 import { SideBar } from "@/components/Dashboards/Patients/SideBar"
-import { Flex, Group } from "@mantine/core"
+import { Flex } from "@mantine/core"
 import { useSession } from "next-auth/react"
 import { useParams, useRouter } from "next/navigation"
 import { useState } from "react"
@@ -39,10 +39,11 @@ const page = () => {
         <Flex h={"100vh"}>
             <SideBar active={active} setActive={setActive} />
             <main style={{ flexGrow: 1, padding: "20px" }}>
-                {active === "Dashboard" && <Dashboard setActive={setActive} />}
+                {active === "Dashboard" && (
+                    <UserDashboard setActive={setActive} />
+                )}
                 {active === "Appointments" && <Appointment />}
-                {active === "Appointment History" && <History />}
-                {active === "My Information" && <ProfileSettings />}
+                {active === "Review A Doctor" && <ReviewDoc />}
             </main>
         </Flex>
     )

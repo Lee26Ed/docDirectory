@@ -15,13 +15,8 @@ import classes from "./sidebar.module.css"
 import { signOut } from "next-auth/react"
 
 const data = [
-    {
-        link: "",
-        label: "Dashboard",
-        icon: IconDashboard,
-    },
+    { link: "", label: "Dashboard", icon: IconDashboard },
     { link: "", label: "Appointments", icon: IconStethoscope },
-    { link: "", label: "Appointment History", icon: IconHistory },
     { link: "", label: "My Information", icon: IconUserCog },
 ]
 

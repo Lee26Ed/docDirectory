@@ -5,6 +5,7 @@ import {
     IconDashboard,
     IconHistory,
     IconLogout,
+    IconStar,
     IconStethoscope,
     IconSwitchHorizontal,
     IconTrash,
@@ -13,12 +14,13 @@ import {
 import { Avatar, Code, Group } from "@mantine/core"
 import classes from "./sidebar.module.css"
 import { signOut } from "next-auth/react"
+import Image from "next/image"
+import Link from "next/link"
 
 const data = [
     { link: "", label: "Dashboard", icon: IconDashboard },
     { link: "", label: "Appointments", icon: IconStethoscope },
-    { link: "", label: "Appointment History", icon: IconHistory },
-    { link: "", label: "My Information", icon: IconUserCog },
+    { link: "", label: "Review A Doctor", icon: IconStar },
 ]
 
 export interface SideBarProps {
@@ -49,9 +51,17 @@ export function SideBar({ active, setActive }: SideBarProps) {
         <nav className={classes.navbar}>
             <div className={classes.navbarMain}>
                 <Group className={classes.header} justify='space-between'>
-                    <Avatar name={name} color='dark' />
+                    {/* <Avatar name={name} color='dark' /> */}
+                    <Link href='/'>
+                        <Image
+                            src={"/favicon.svg"}
+                            alt='Logo'
+                            width={50}
+                            height={50}
+                        />
+                    </Link>
                     <Code fw={700} className={classes.version}>
-                        v3.1.2
+                        v1.0.5
                     </Code>
                 </Group>
                 {links}

@@ -42,3 +42,17 @@ interface Appointment {
     status: string
     duration: number
 }
+
+interface ReviewDoctor {
+    doctorId: number
+    appointmentId: number
+    userId: number
+    fullName: string
+    profileImage: string
+    specialty: string
+    location: string
+    appointmentDate: string
+    time: string
+    reviewed: boolean
+    status: string
+}
