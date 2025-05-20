@@ -31,3 +31,14 @@ interface Schedule {
     createdAt: Date
     updatedAt: Date
 }
+
+interface Appointment {
+    appointmentId: number
+    doctorId: number
+    userId: number
+    fullName: string
+    appointmentDate: Date
+    time: string
+    status: string
+    duration: number
+}
