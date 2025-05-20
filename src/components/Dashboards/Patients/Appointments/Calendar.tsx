@@ -18,7 +18,7 @@ import { useSession } from "next-auth/react"
 import {
     CancelUserAppointment,
     GetUserAppointments,
-} from "@/app/api/actions/CreateAppointment"
+} from "@/app/actions/CreateAppointment"
 import { notifications } from "@mantine/notifications"
 
 // React Big Calendar requires a localizer (Moment.js here)

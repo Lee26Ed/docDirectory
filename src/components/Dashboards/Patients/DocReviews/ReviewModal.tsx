@@ -1,5 +1,5 @@
 "use client"
-import { SubmitReview } from "@/app/api/actions/ReviewDoctors"
+import { SubmitReview } from "@/app/actions/ReviewDoctors"
 import { Button, Modal, Rating, Textarea } from "@mantine/core"
 import { useForm } from "@mantine/form"
 import { notifications } from "@mantine/notifications"

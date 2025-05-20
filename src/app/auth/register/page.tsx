@@ -1,5 +1,5 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import RegisterForm from "@/components/auth/RegisterForm"
+import { authOptions } from "@/lib/authOptions"
 import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
 import React from "react"

@@ -20,7 +20,7 @@ import { useSession } from "next-auth/react"
 import {
     CreateAppointment,
     GetUnavailableTimes,
-} from "@/app/api/actions/CreateAppointment"
+} from "@/app/actions/CreateAppointment"
 import { notifications } from "@mantine/notifications"
 
 interface BookAppointmentProps {
@@ -234,6 +234,21 @@ function BookAppointment({ opened, close, schedule }: BookAppointmentProps) {
                             )}
                             {loadingTimes && <Loader size='sm' mt='sm' />}
                         </Stepper.Step>
+                        <Stepper.Step
+                            label='Payment'
+                            description='Payment details'
+                            allowStepSelect={active > 2}
+                        >
+                            <Stack justify='center' align='center'>
+                                <Title order={3}>Payment Details</Title>
+                                <Text c='dimmed'>
+                                    Payment details will be handled here.
+                                </Text>
+                                <Text c='dimmed'>
+                                    Total Price: ${schedule?.price}
+                                </Text>
+                            </Stack>
+                        </Stepper.Step>
 
                         <Stepper.Completed>
                             <Stack justify='center' mt='xl' mb='md' gap='md'>
@@ -277,6 +292,13 @@ function BookAppointment({ opened, close, schedule }: BookAppointmentProps) {
                                             }
                                         />
                                         <Detail
+                                            label='Price'
+                                            value={
+                                                `$ ${schedule?.price.toString()}` ||
+                                                "Not selected"
+                                            }
+                                        />
+                                        <Detail
                                             label='Description'
                                             value={
                                                 form.values.description ||
@@ -295,9 +317,9 @@ function BookAppointment({ opened, close, schedule }: BookAppointmentProps) {
                                 Back
                             </Button>
                         )}
-                        {active <= 2 ? (
+                        {active <= 3 ? (
                             <Button onClick={nextStep}>
-                                {active == 2 ? "Create" : "Next Step"}
+                                {active == 3 ? "Create" : "Next Step"}
                             </Button>
                         ) : (
                             <Button type='submit'>Create</Button>

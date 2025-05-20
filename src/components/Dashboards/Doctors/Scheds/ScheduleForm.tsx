@@ -13,7 +13,7 @@ import { useForm } from "@mantine/form"
 import { TimeInput as MantineTimeInput } from "@mantine/dates"
 import { useSession } from "next-auth/react"
 import { notifications } from "@mantine/notifications"
-import { updateDoctorSchedule } from "@/app/api/actions/UpdateDoctorProfile"
+import { updateDoctorSchedule } from "@/app/actions/UpdateDoctorProfile"
 
 const weekdays = [
     { short: "S", value: 0 },

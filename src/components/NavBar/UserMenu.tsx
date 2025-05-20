@@ -45,7 +45,7 @@ const UserMenu = ({ user }: UserProps) => {
                     leftSection={<IconDashboard size={14} />}
                     onClick={handleDashboardClick}
                 >
-                    Dashboard
+                    {user.role === "admin" ? "Admin Dashboard" : "Appointments"}
                 </Menu.Item>
                 <Menu.Item leftSection={<IconMessageCircle size={14} />}>
                     Messages

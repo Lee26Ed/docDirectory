@@ -1,5 +1,4 @@
 "use client"
-import Dashboard from "@/components/Dashboards/Doctors/Dash/Dashboard"
 import Appointment from "@/components/Dashboards/Patients/Appointments/Appointment"
 import UserDashboard from "@/components/Dashboards/Patients/Dash/UserDashboard"
 import ReviewDoc from "@/components/Dashboards/Patients/DocReviews/ReviewDoc"
@@ -14,7 +13,7 @@ const page = () => {
     const { id } = params
     const router = useRouter()
     const { data: session, status } = useSession()
-    const [active, setActive] = useState("Dashboard")
+    const [active, setActive] = useState("Appointments")
 
     if (status === "loading") {
         return <div>Loading...</div>
@@ -39,9 +38,9 @@ const page = () => {
         <Flex h={"100vh"}>
             <SideBar active={active} setActive={setActive} />
             <main style={{ flexGrow: 1, padding: "20px" }}>
-                {active === "Dashboard" && (
+                {/* {active === "Dashboard" && (
                     <UserDashboard setActive={setActive} />
-                )}
+                )} */}
                 {active === "Appointments" && <Appointment />}
                 {active === "Review A Doctor" && <ReviewDoc />}
             </main>

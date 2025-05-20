@@ -18,7 +18,7 @@ import Image from "next/image"
 import Link from "next/link"
 
 const data = [
-    { link: "", label: "Dashboard", icon: IconDashboard },
+    // { link: "", label: "Dashboard", icon: IconDashboard },
     { link: "", label: "Appointments", icon: IconStethoscope },
     { link: "", label: "Review A Doctor", icon: IconStar },
 ]

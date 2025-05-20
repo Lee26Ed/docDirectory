@@ -1,9 +1,9 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import LoginForm from "@/components/auth/LoginForm"
 import { Center, Container, Paper, Stack } from "@mantine/core"
 import { getServerSession } from "next-auth"
 import React from "react"
 import { redirect } from "next/navigation"
+import { authOptions } from "@/lib/authOptions"
 
 const page = async () => {
     const session = await getServerSession(authOptions)

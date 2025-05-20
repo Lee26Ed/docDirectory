@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { DoctorReviewCard } from "./DocReviewCards"
 import { Container, Title } from "@mantine/core"
 import { useSession } from "next-auth/react"
-import { GetReviewDoctorsList } from "@/app/api/actions/ReviewDoctors"
+import { GetReviewDoctorsList } from "@/app/actions/ReviewDoctors"
 import { notifications } from "@mantine/notifications"
 
 const ReviewDoc = () => {

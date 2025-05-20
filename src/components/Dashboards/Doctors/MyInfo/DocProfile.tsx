@@ -2,7 +2,7 @@
 import {
     updateDoctorPassword,
     updateDoctorProfile,
-} from "@/app/api/actions/UpdateDoctorProfile"
+} from "@/app/actions/UpdateDoctorProfile"
 import {
     Container,
     Grid,

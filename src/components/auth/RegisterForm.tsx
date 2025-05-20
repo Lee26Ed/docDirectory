@@ -25,10 +25,10 @@ import Link from "next/link"
 import { useDisclosure, useFocusTrap } from "@mantine/hooks"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
-import { createUser } from "@/app/api/actions/RegisterUser"
+import { createUser } from "@/app/actions/RegisterUser"
 import { signIn } from "next-auth/react"
 import { notifications } from "@mantine/notifications"
-import { createDoctor } from "@/app/api/actions/RegisterDoctor"
+import { createDoctor } from "@/app/actions/RegisterDoctor"
 
 // Define interfaces for form values
 interface UserRegisterFormValues {
