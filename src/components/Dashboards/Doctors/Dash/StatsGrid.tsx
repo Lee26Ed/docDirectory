@@ -20,7 +20,7 @@ const data = [
     { title: "Revenue", icon: "receipt", value: "13,456", diff: 34 },
     { title: "Profit", icon: "coin", value: "4,145", diff: -13 },
     { title: "Coupons usage", icon: "discount", value: "745", diff: 18 },
-    { title: "New customers", icon: "user", value: "188", diff: -30 },
+    { title: "New Patients", icon: "user", value: "188", diff: -30 },
 ] as const
 
 export function StatsGrid() {
@@ -29,7 +29,7 @@ export function StatsGrid() {
         const DiffIcon = stat.diff > 0 ? IconArrowUpRight : IconArrowDownRight
 
         return (
-            <Paper withBorder p='md' radius='md' key={stat.title}>
+            <Paper withBorder p='sm' radius='md' key={stat.title}>
                 <Group justify='space-between'>
                     <Text size='xs' c='dimmed' className={classes.title}>
                         {stat.title}

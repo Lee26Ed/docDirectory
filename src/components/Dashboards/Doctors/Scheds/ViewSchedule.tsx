@@ -12,6 +12,7 @@ import {
     Center,
     Grid,
     ThemeIcon,
+    GridCol,
 } from "@mantine/core"
 import { IconClock, IconMoneybag, IconCalendarTime } from "@tabler/icons-react"
 import { useSession } from "next-auth/react"
@@ -62,11 +63,11 @@ export default function ScheduleViewer() {
         )
     }
     return (
-        <Box maw={500} mx='auto'>
-            <Card shadow='sm' padding='lg' radius='md' withBorder>
-                <Stack gap='md'>
+        <Box maw={700} mx='auto'>
+            <Card padding='lg' radius='md' withBorder>
+                <Stack gap='sm'>
                     <div>
-                        <Text fw={500} size='sm' mb='xs'>
+                        <Text fw={400} size='sm' mb='xs'>
                             Working Days
                         </Text>
                         <Group gap='sm'>
@@ -139,14 +140,19 @@ export default function ScheduleViewer() {
                                 </Text>
                             </Center>
                         </Grid.Col>
+                        <GridCol span={6}>
+                            <Center inline>
+                                <ThemeIcon
+                                    variant='light'
+                                    color='green'
+                                    mr='xs'
+                                >
+                                    <IconMoneybag size={16} />
+                                </ThemeIcon>
+                                <Text size='sm'>Price: ${schedule.price}</Text>
+                            </Center>
+                        </GridCol>
                     </Grid>
-
-                    <Center inline>
-                        <ThemeIcon variant='light' color='green' mr='xs'>
-                            <IconMoneybag size={16} />
-                        </ThemeIcon>
-                        <Text size='sm'>Price: ${schedule.price}</Text>
-                    </Center>
                 </Stack>
             </Card>
         </Box>

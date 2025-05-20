@@ -43,6 +43,19 @@ interface Appointment {
     duration: number
 }
 
+interface DoctorAppointment {
+    id: number
+    doctorId: number
+    name: string
+    gender: string
+    description: string
+    appointmentDate: Date
+    time: string
+    status: string
+    duration: number
+    createdAt: Date
+}
+
 interface ReviewDoctor {
     doctorId: number
     appointmentId: number

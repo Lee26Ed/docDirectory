@@ -26,6 +26,23 @@ const defaultSchedule = {
 export async function createDoctor(formData: RegisterDoctorFormData) {
     const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL
 
+    const imageurl = [
+        "f001.png",
+        "f002.png",
+        "f003.png",
+        "f004.png",
+        "f005.png",
+        "f006.png",
+        "f007.png",
+        "m001.png",
+        "m002.png",
+        "m004.png",
+        "m005.png",
+        "m006.png",
+        "m007.png",
+        "m010.png",
+    ]
+
     const data = {
         fullName: formData.fullName,
         email: formData.email,
@@ -36,7 +53,9 @@ export async function createDoctor(formData: RegisterDoctorFormData) {
         location: formData.location,
         phone: formData.phone,
         bio: formData.biography,
-        profileImage: formData.profileImage || "f001.png",
+        profileImage:
+            formData.profileImage ||
+            imageurl[Math.floor(Math.random() * imageurl.length)],
     }
     try {
         const res = await fetch(
