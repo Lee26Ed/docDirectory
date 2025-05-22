@@ -8,3 +8,10 @@
         font-size: rem(50px);
     }
 }
+
+
+@media (max-width: 768px) {
+    .title {
+        margin: 1rem !important;
+    }
+}
