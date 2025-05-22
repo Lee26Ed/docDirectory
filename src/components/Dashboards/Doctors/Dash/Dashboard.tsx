@@ -28,7 +28,7 @@ export default function Dashboard({ setActive }: DashboardProps) {
                     </Grid.Col>
                     <Grid.Col
                         span={{ base: 12, xs: 6 }}
-                        onClick={() => setActive("Schedule")}
+                        onClick={() => setActive("My Information")}
                         style={{ cursor: "pointer" }}
                     >
                         <ScheduleViewer />
