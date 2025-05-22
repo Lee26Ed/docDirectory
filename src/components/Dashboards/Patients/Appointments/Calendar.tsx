@@ -70,7 +70,7 @@ const UserAppointmentsCalendar: React.FC = () => {
                 id: appointment.id,
                 doctorId: appointment.doctorId,
                 fullName: appointment.fullName,
-                title: `Appointment with Dr. ${appointment.fullName}`,
+                title: appointment.fullName,
                 start: appointment.start,
                 end: appointment.end,
                 status: appointment.status,
